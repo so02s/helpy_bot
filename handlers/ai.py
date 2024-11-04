@@ -35,7 +35,7 @@ async def start_cmd(msg: Message):
     })
 
     response = client.chat.completions.create(
-        model="llama3:8b",
+        model="llama2",
         messages=dialog_history,
     )
 

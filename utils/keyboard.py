@@ -26,12 +26,12 @@ def task_manager():
 
 
 
-def reply_answers(cube_id: int, question_id: int, answers: list):
-    builder = InlineKeyboardBuilder()
-    for answer in answers:
-        builder.button(
-            text=f'{hex_to_emoji.get(answer.color, '')}   {answer.text}',
-            callback_data='UserCallbackFactory(cube_id=cube_id, answer_id=answer.id)'
-        )
-    builder.adjust(1)
-    return builder.as_markup()
+# def reply_answers(cube_id: int, question_id: int, answers: list):
+#     builder = InlineKeyboardBuilder()
+#     for answer in answers:
+#         builder.button(
+#             text=f'{hex_to_emoji.get(answer.color, '')}   {answer.text}',
+#             callback_data='UserCallbackFactory(cube_id=cube_id, answer_id=answer.id)'
+#         )
+#     builder.adjust(1)
+#     return builder.as_markup()
