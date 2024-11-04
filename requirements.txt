@@ -1,0 +1,7 @@
+aiogram_dialog
+aiogram
+python-decouple
+sqlalchemy
+asyncpg
+llamaapi
+openai
