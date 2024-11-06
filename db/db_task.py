@@ -41,7 +41,7 @@ async def add_task(**kwargs):
             break # Выход при других ошибках
 
     # Добавление в БД
-    async with Session as session, session.begin():
+    async with Session() as session, session.begin():
         try:
             session.add(task)
             session.commit()
@@ -60,7 +60,7 @@ async def delete_tasks(tasks_id: List[int]) -> None:
     Пропускает задачи, которых нет в БД
     """
     # TODO может не сработать
-    async with Session as session, session.begin():
+    async with Session() as session, session.begin():
         await session.execute(
             Task.__table__
             .delete()
@@ -91,7 +91,7 @@ async def update_task(
     - ValueError: Если задача с заданным ID не найдена.
     """
     
-    async with Session as session, session.begin():
+    async with Session() as session, session.begin():
         result = await session.execute(
             select(Task)
             .where(Task.id == task_id)
@@ -113,7 +113,7 @@ async def get_tasks() -> List[Task]:
     Возвращает:
     - List[Task]: Список объектов задач, извлеченных из базы данных.
     """
-    async with Session as session:
+    async with Session() as session:
         result = await session.execute(
             select(Task)
         )
