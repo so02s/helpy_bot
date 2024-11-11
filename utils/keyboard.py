@@ -8,7 +8,7 @@ async def inline(callback: CallbackQuery, text: str, reply_markup):
 def start_menu():
     buttons = [
         [   InlineKeyboardButton(text="Управление задачами и мероприятиями", callback_data="task_manager")],
-        [   InlineKeyboardButton(text="Все мероприятия", callback_data="task_all")]
+        [   InlineKeyboardButton(text="Все мероприятия", callback_data="all_task")]
     ]
     kb = InlineKeyboardMarkup(inline_keyboard=buttons)
     return kb

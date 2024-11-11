@@ -16,7 +16,7 @@ async def task_manager(callback: CallbackQuery):
     )
 
 # Отображение всех заданий
-@router.callback_query(F.data == 'task_all')
+@router.callback_query(F.data == 'all_task')
 async def task_all(callback: CallbackQuery):
     tasks = await db.get_tasks()
     if not tasks:
@@ -29,3 +29,8 @@ async def task_all(callback: CallbackQuery):
     
     await callback.message.answer(tasks_message)
 
+# Добавление
+@router.callback_query(F.data == 'add_task')
+async def task_all(callback: CallbackQuery):
+    # 
+    await callback.message.answer("Задача успешно добавлена!")
