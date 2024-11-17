@@ -4,9 +4,8 @@ from create_bot import bot, dp
 from handlers import (
     start,
     task,
-    ai,
 )
-
+from utils.filter import IsAdminMiddleware
 
 async def start_bot():
     pass
@@ -17,11 +16,11 @@ async def stop_bot():
 async def main():
     dp.include_routers(
         start.router,
-        task.router,
-        # ai.router
+        task.router
     )
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
+    dp.message.outer_middleware(IsAdminMiddleware())
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)

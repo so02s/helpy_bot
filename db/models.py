@@ -7,6 +7,27 @@ from sqlalchemy.orm import relationship, DeclarativeBase, mapped_column, Mapped
 from sqlalchemy.ext.asyncio import AsyncAttrs, create_async_engine, async_sessionmaker
 from typing import Optional, List
 
+# class Note:
+#     def __init__(self,
+#                  text = "",
+#                  date = dt.now().strftime('%Y-%m-%d'),
+#                  time = dt.now().strftime('%H:%M:%S')):
+#         self.text = text
+#         self.date = date
+#         self.time = time
+
+
+
+
+
+
+
+
+
+
+
+
+
 DATABASE_URL = f"postgresql+asyncpg://{config('DB_USER')}:{config('DB_PASS')}@{config('DB_HOST')}/{config('DB_NAME')}"
 
 engine = create_async_engine(url=DATABASE_URL, echo=True)
@@ -17,12 +38,11 @@ async def create_all_tables():
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
-
 class Base(AsyncAttrs, DeclarativeBase):
     pass
 
 # --------------- Для заданий
-
+# ----- кажется бд я не буду использовать, а буду файловую систему :р
 class TaskType(enum.Enum):
     EVENT = "event"
     TASK = "task"
@@ -55,5 +75,3 @@ class Task(Base):
     # # Связь с следующими задачами
     # next_tasks: List['Task'] = relationship("Task", back_populates="previous_task")
     
-
-
