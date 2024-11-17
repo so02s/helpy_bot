@@ -6,49 +6,8 @@ async def inline(callback: CallbackQuery, text: str, reply_markup):
     await callback.message.edit_text(text, reply_markup=reply_markup)
 
 def testing():
-    buttons = [
-        [   InlineKeyboardButton(text="Таска", callback_data=RoomCallbackFactory(room_name='task'))],
-        [   InlineKeyboardButton(text="Заметка", callback_data=RoomCallbackFactory(room_name='note'))]
-    ]
-    kb = InlineKeyboardMarkup(inline_keyboard=buttons)
-    return kb
-
-
-
-
-
-
-
-
-
-
-def start_menu():
-    buttons = [
-        [   InlineKeyboardButton(text="Управление задачами и мероприятиями", callback_data="task_manager")],
-        [   InlineKeyboardButton(text="Все мероприятия", callback_data="all_task")]
-    ]
-    kb = InlineKeyboardMarkup(inline_keyboard=buttons)
-    return kb
-
-def task_manager():
-    buttons = [
-        [   InlineKeyboardButton(text="Добавить", callback_data="add_task")],
-        # [   InlineKeyboardButton(text="Изменить", callback_data="change_task")],
-        [   InlineKeyboardButton(text="Удалить", callback_data="del_task")],
-        [   InlineKeyboardButton(text="Назад", callback_data="start_model")]
-    ]
-    kb = InlineKeyboardMarkup(inline_keyboard=buttons)
-    return kb
-
-
-
-
-# def reply_answers(cube_id: int, question_id: int, answers: list):
-#     builder = InlineKeyboardBuilder()
-#     for answer in answers:
-#         builder.button(
-#             text=f'{hex_to_emoji.get(answer.color, '')}   {answer.text}',
-#             callback_data='UserCallbackFactory(cube_id=cube_id, answer_id=answer.id)'
-#         )
-#     builder.adjust(1)
-#     return builder.as_markup()
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Таска", callback_data=RoomCallbackFactory(room_name='task'))
+    builder.button(text="Заметка", callback_data=RoomCallbackFactory(room_name='note'))
+    builder.adjust(1)
+    return builder.as_markup()

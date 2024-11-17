@@ -4,6 +4,7 @@ from create_bot import bot, dp
 from handlers import (
     start,
     task,
+    change_room
 )
 from utils.filter import IsAdminMiddleware
 
@@ -16,7 +17,8 @@ async def stop_bot():
 async def main():
     dp.include_routers(
         start.router,
-        task.router
+        task.router,
+        change_room.router
     )
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
