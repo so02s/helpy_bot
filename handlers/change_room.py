@@ -1,11 +1,12 @@
-import sys
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.scene import Scene, on, ScenesManager
-from utils.filter import RoomCallbackFactory
+
 from create_bot import bot
 from utils import keyboard as kb
+from utils.filter import RoomCallbackFactory
+
 
 '''
     Переход по сценам

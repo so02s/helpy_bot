@@ -1,9 +1,7 @@
 from aiogram import Router, F
-from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram.filters import CommandStart
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.scene import Scene, SceneRegistry, ScenesManager, on
-from aiogram.types.callback_query import CallbackQuery
 
 from create_bot import bot
 from utils import keyboard as kb

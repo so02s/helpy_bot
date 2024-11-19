@@ -1,8 +1,10 @@
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
-from handlers.change_room import CustomScene
 from aiogram.fsm.scene import on
+
+from handlers.change_room import CustomScene
+
 
 '''
     Комната с заметками - можно создать заметку, она сохранится в определенный файл

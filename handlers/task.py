@@ -1,17 +1,16 @@
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
-from handlers.change_room import CustomScene
 from aiogram.fsm.scene import on
-from aiogram.types.callback_query import CallbackQuery
-from aiogram.dispatcher.middlewares.base import BaseMiddleware
-from utils import keyboard as kb
-from utils.globals import Globals
-from utils.filter import RoomMiddleware
+
+from handlers.change_room import CustomScene
+
 
 '''
     Тут все сообщения превращаются в заметку с датой, временем
     и добавляются в shreduler (напоминание от бота)
+    
+    TODO не забыть про приоритет
 '''
 
 class TaskScene(CustomScene, state='task'):

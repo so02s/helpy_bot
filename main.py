@@ -1,5 +1,8 @@
 import asyncio
+
 from aiogram import Dispatcher
+from aiogram.fsm.scene import SceneRegistry
+from aiogram.fsm.storage.memory import SimpleEventIsolation
 
 from create_bot import bot
 from handlers import (
@@ -9,8 +12,8 @@ from handlers import (
     note
 )
 from utils.filter import IsAdminMiddleware
-from aiogram.fsm.scene import SceneRegistry
-from aiogram.fsm.storage.memory import SimpleEventIsolation
+
+
 
 async def start_bot():
     pass
@@ -26,6 +29,8 @@ def create_dispatcher() -> Dispatcher:
     scene_registry.add(task.TaskScene)
     scene_registry.add(note.NoteScene)
     return dispatcher
+
+
 
 async def main():
     dp = create_dispatcher()
@@ -44,6 +49,7 @@ async def main():
         await dp.start_polling(bot)
     finally:
         await bot.session.close()
+
 
 
 if __name__ == "__main__":
