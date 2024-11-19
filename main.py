@@ -1,12 +1,16 @@
 import asyncio
+from aiogram import Dispatcher
 
-from create_bot import bot, dp
+from create_bot import bot
 from handlers import (
     start,
     task,
-    change_room
+    # change_room,
+    # note
 )
 from utils.filter import IsAdminMiddleware
+from aiogram.fsm.scene import SceneRegistry
+from aiogram.fsm.storage.memory import SimpleEventIsolation
 
 async def start_bot():
     pass
@@ -14,11 +18,21 @@ async def start_bot():
 async def stop_bot():
     pass
 
+def create_dispatcher() -> Dispatcher:
+    dispatcher = Dispatcher(
+        events_isolation=SimpleEventIsolation(),
+    )
+    scene_registry = SceneRegistry(dispatcher)
+    scene_registry.add(task.TaskScene)
+    return dispatcher
+
 async def main():
+    dp = create_dispatcher()
     dp.include_routers(
         start.router,
+    #     change_room.router,
         task.router,
-        change_room.router
+    #     note.router
     )
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)

@@ -1,42 +1,50 @@
 from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.filters import Command
+from utils.change_room import CustomScene
+from aiogram.fsm.scene import on
 from aiogram.types.callback_query import CallbackQuery
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from utils import keyboard as kb
-from db import db_task as db
+from utils.globals import Globals
+from utils.filter import RoomMiddleware
 
-# class TaskMiddleware(BaseMiddleware):
-#     async def __call__(
-#         self,
-#         handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
-#         event: TelegramObject,
-#         data: dict
-#     ) -> Any:
-#         # Состояние необходимо сохранять где-то на сервере
-#         # Через callback нормально не выйдет
-        
-        
-#         if isinstance(event, CallbackQuery):
-#             callback_data = CallbackFactory.parse(event.data)
-#             if callback_data['action'] == 'task':
-#                 pass
-#         return
+'''
+    Тут все сообщения превращаются в заметку с датой, временем
+    и добавляются в shreduler (напоминание от бота) 
+'''
+
+class TaskScene(CustomScene, state='task'):
+    @on.message.enter()
+    async def on_msg_enter(self, message: Message) -> None:
+        await message.answer('Комната с заметками')
+    
+    @on.message()
+    async def on_msg(self, message: Message) -> None:
+        await message.answer('Да-да, это заметки черт возьми!')
 
 router = Router()
-
-# router.message.middleware(TaskMiddleware())
-# router.callback_query.middleware(TaskMiddleware())
-
-# Тут все сообщения превращаются в заметку с датой, временем
-# и добавляются в shreduler (напоминание от бота) 
-
-@router.message()
-async def add_task(msg: Message):
-    await msg.answer('Хехе')
-    
+router.message.register(TaskScene.as_handler(), Command('task'))
 
 
+
+
+
+
+# router = Router()
+
+# router.message.outer_middleware(RoomMiddleware('task'))
+
+# @router.message()
+# async def add_task(msg: Message):
+#     try:
+#         await msg.answer(f'Таски')
+#     except SkipHandler:
+#         print("Обработчик пропущен.")
+
+# @router.message()
+# async def another_handler(msg: Message):
+#     await msg.answer('Это другой обработчик!')
 
 
 

@@ -1,7 +1,7 @@
 ﻿import logging
 
 from decouple import config
-from aiogram import Bot, Dispatcher
+from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
@@ -12,6 +12,3 @@ logger=logging.getLogger(__name__)
 
 # инициализация бота
 bot = Bot(token=config('TOKEN_BOT'), default=DefaultBotProperties(parse_mode=ParseMode.HTML)) 
-dp = Dispatcher()
-
-
