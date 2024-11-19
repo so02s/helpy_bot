@@ -1,13 +1,22 @@
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import Command
-from aiogram.types.callback_query import CallbackQuery
-from aiogram.dispatcher.middlewares.base import BaseMiddleware
-from utils import keyboard as kb
+from handlers.change_room import CustomScene
+from aiogram.fsm.scene import on
 
+'''
+    Комната с заметками - можно создать заметку, она сохранится в определенный файл
+'''
+
+class NoteScene(CustomScene, state='note'):
+    @on.message.enter()
+    @on.callback_query.enter()
+    async def on_msg_enter(self, message: Message = None) -> None:
+        await message.answer('Комната с заметками')
+    
+    @on.message()
+    async def on_msg(self, message: Message) -> None:
+        await message.answer('Да-да, это заметки черт возьми!')
 
 router = Router()
-
-@router.message()
-async def add_task(msg: Message):
-    await msg.answer('Заметки')
+router.message.register(NoteScene.as_handler(), Command('task'))

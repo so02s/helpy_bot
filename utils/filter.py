@@ -12,7 +12,7 @@ from utils.globals import Globals
 from aiogram.dispatcher.event.bases import SkipHandler
 
 class RoomCallbackFactory(CallbackData, prefix="fabroom"):
-    room_name: str
+    scene: str
     
 # TODO admin в настройках
 class IsAdminMiddleware(BaseMiddleware):  

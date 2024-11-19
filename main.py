@@ -5,8 +5,8 @@ from create_bot import bot
 from handlers import (
     start,
     task,
-    # change_room,
-    # note
+    change_room,
+    note
 )
 from utils.filter import IsAdminMiddleware
 from aiogram.fsm.scene import SceneRegistry
@@ -24,15 +24,16 @@ def create_dispatcher() -> Dispatcher:
     )
     scene_registry = SceneRegistry(dispatcher)
     scene_registry.add(task.TaskScene)
+    scene_registry.add(note.NoteScene)
     return dispatcher
 
 async def main():
     dp = create_dispatcher()
     dp.include_routers(
         start.router,
-    #     change_room.router,
+        change_room.router,
         task.router,
-    #     note.router
+        note.router
     )
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
