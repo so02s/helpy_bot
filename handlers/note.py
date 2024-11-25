@@ -34,3 +34,8 @@ class NoteScene(CustomScene, state='note'):
 router = Router()
 router.message.register(NoteScene.as_handler(), Command('task'))
 
+async def project(json_from_ai: str) -> None:
+    note = obs.note_from_ai(json_from_ai)
+    # TODO проверка насколько заполнен проект -> сохранить либо дописать
+    # Возможно FSM 
+    await obs.save_project(note)

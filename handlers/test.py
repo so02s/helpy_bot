@@ -27,7 +27,7 @@ def generate(prompt: str, system_prompt: str = " Don't Write Code unless Mention
 
     payload = {
         "messages": [{"content": system_prompt, "role": "system"}, {"content": prompt, "role": "user"}],
-        "agentMode": {"Ru_answ"},
+        "agentMode": {""},
         "trendingAgentMode": {},
     }
     

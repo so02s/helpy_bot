@@ -7,10 +7,8 @@ from aiogram.fsm.storage.memory import SimpleEventIsolation
 from create_bot import bot
 from handlers import (
     start,
-    task,
-    change_room,
-    note,
-    test
+    test,
+    ai
 )
 from utils.filter import IsAdminMiddleware
 
@@ -26,9 +24,9 @@ def create_dispatcher() -> Dispatcher:
     dispatcher = Dispatcher(
         events_isolation=SimpleEventIsolation(),
     )
-    scene_registry = SceneRegistry(dispatcher)
-    scene_registry.add(task.TaskScene)
-    scene_registry.add(note.NoteScene)
+    # scene_registry = SceneRegistry(dispatcher)
+    # scene_registry.add(task.TaskScene)
+    # scene_registry.add(note.NoteScene)
     return dispatcher
 
 
@@ -36,11 +34,12 @@ def create_dispatcher() -> Dispatcher:
 async def main():
     dp = create_dispatcher()
     dp.include_routers(
-        test.router,
+        # test.router,
         start.router,
-        change_room.router,
-        task.router,
-        note.router
+        ai.router
+        # change_room.router,
+        # task.router,
+        # note.router
     )
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)

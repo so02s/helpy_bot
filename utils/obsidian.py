@@ -1,26 +1,62 @@
 import os
+import json
 from datetime import datetime as dt
 from pytz import timezone
 from aiogram.types import Message, MessageEntity
+
+import aiofiles
 
 # мне не нравится, что сохраняется по времени 
 # TODO переделать под заголовки
 class Note:
     def __init__(
         self,
+        name = "",
         text = "",
+        path = "",
         date = dt.now().strftime('%Y-%m-%d'),
         time = dt.now().strftime('%H:%M:%S'),
         from_usr = "",
-        tags = [],
-        links = []
+        tags = None,
+        files = None,
+        links = None,
+        
+        # Дальше для проектов
+        goal = None
     ):
         self.text = text
         self.date = date
         self.time = time
+        self.path = path
         self.from_usr = from_usr
         self.tags = tags
+        self.files = files
         self.links = links
+        
+        self.goal = goal
+
+
+def note_from_ai(text: str) -> Note:
+    data = json.loads(text)
+    
+    name = data.get("name", "Без названия")
+    project_text = data.get("text", "Описание отсутствует")
+    goal = data.get("goals", [])
+    files = data.get("files", [])
+    links = data.get("links", [])
+    tags = data.get("tags", [])
+    
+    note = Note(
+        name=name,
+        text=project_text,
+        goal=goal,
+        files=files,
+        links=links,
+        tags=tags
+    )
+    
+    return note
+
 
 def get_note_name(curr_date) -> str:
     date_parts = curr_date.split('-')
@@ -30,13 +66,23 @@ def get_note_name(curr_date) -> str:
     return os.path.join(r"E:\spheres_of_life\DeepSleep", f'{note_name}.md')
 
 # TODO перевести на ассинхронное выполнение + сохранение в определенный файл
-def save_message(note: Note) -> None:
+async def save_message(note: Note) -> None:
+    
     curr_date = note.date
     curr_time = note.time
     note_text = f'#### [[{curr_date}]] {curr_time}\n{note.text}\n\n'
     
     with open(get_note_name(curr_date), 'a', encoding='UTF-8') as f:
         f.write(note_text)
+        
+async def save_project(note: Note) -> None:
+    # TODO шаблон для проектов
+    
+    # TODO тут еще настройку из файла (путь до основной папки)
+    # типо этого r"E:\spheres_of_life\DeepSleep"
+    with aiofiles.open("E:\spheres_of_life\\testing_void\Projects\\" + note.path, 'a', encoding='UTF-8') as f:
+        await f.write(note_text)
+
 
 
 def note_from_message(message: Message):
@@ -191,3 +237,32 @@ async def embed_formatting(message: Message) -> str:
         # await message.reply(f'🤷‍♂️ {e}')
         formatted_note = note
     return formatted_note
+
+
+# ================= Шаблоны
+
+# Проекты
+def get_project_text(note: Note) -> str:
+    goals_list = "\n".join(f"- [ ] {goal}" for goal in note.goal)
+    files_list = "\n".join(f"- [[{file}]]" for file in note.files)
+    links_list = "\n".join(f"- [{link['name']}]({link['url']})" for link in note.links)
+
+    project_text = f"""# Проект: {note.name}
+
+## Описание
+{note.text}
+
+## Задачи
+{goals_list}
+
+## Ссылки на другие файлы
+{files_list}
+
+## Внешние ресурсы
+{links_list}
+
+## Теги
+{' '.join(f'[[{tag}]]' for tag in note.tags)}
+"""
+
+    return project_text
