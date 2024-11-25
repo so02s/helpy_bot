@@ -9,7 +9,8 @@ from handlers import (
     start,
     task,
     change_room,
-    note
+    note,
+    test
 )
 from utils.filter import IsAdminMiddleware
 
@@ -35,6 +36,7 @@ def create_dispatcher() -> Dispatcher:
 async def main():
     dp = create_dispatcher()
     dp.include_routers(
+        test.router,
         start.router,
         change_room.router,
         task.router,
