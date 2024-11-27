@@ -11,28 +11,14 @@ import requests
 import re
 from typing import Tuple, Optional
 
-def generate(prompt: str, system_prompt: str = " Don't Write Code unless Mentioned", web_access: bool = True, stream: bool = True, chat_endpoint: str = "https://www.blackbox.ai/api/chat") -> Tuple[Optional[str], str]:
-    """
-    Generates a response for the given prompt using the Blackbox.ai API.
-
-    Parameters:
-    - prompt (str): The prompt to generate a response for.
-    - system_prompt (str): The system prompt to be used in the conversation. Defaults to "Don't Write Code unless Mentioned".
-    - web_access (bool): A flag indicating whether to access web resources during the conversation. Defaults to True.
-    - prints (bool): A flag indicating whether to print the conversation messages. Defaults to True.
-
-    Returns:
-    - Tuple[Optional[str], str]: A tuple containing the sources of the conversation (if available) and the complete response generated.
-    """
+def generate(prompt: str, system_prompt: str = " Don't Write Code unless Mentioned", stream: bool = True, chat_endpoint: str = "https://www.blackbox.ai/api/chat") -> Tuple[Optional[str], str]:
 
     payload = {
-        "messages": [{"content": system_prompt, "role": "system"}, {"content": prompt, "role": "user"}],
-        "agentMode": {""},
+        "messages": [{"content": prompt, "role": "user"}],
+        # "messages": [{"content": system_prompt, "role": "system"}, {"content": prompt, "role": "user"}],
+        "agentMode": {},
         "trendingAgentMode": {},
     }
-    
-    if web_access:
-        payload["codeModelMode"] = web_access
 
     response = requests.post(chat_endpoint, json=payload, stream=True)
 
@@ -59,6 +45,6 @@ router = Router()
 
 @router.message()
 async def start_console(msg: Message):
-    sources, resp = generate(msg.text, web_access=False, stream=True) #chat_endpoint='https://www.blackbox.ai/agent/Ru_answgPzxU8u')
+    sources, resp = generate(msg.text, stream=True)
     # print(resp)
-    await msg.answer(resp)
+    await msg.answer(sources, resp)

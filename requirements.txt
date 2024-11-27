@@ -7,3 +7,4 @@ llamaapi
 openai
 pytz
 Requests==2.31.0
+grequests

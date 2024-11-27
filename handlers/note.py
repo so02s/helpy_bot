@@ -31,8 +31,8 @@ class NoteScene(CustomScene, state='note'):
 
         obs.save_message(note) # сохранение заметки
 
-router = Router()
-router.message.register(NoteScene.as_handler(), Command('task'))
+# router = Router()
+# router.message.register(NoteScene.as_shandler(), Command('task'))
 
 async def project(json_from_ai: str) -> None:
     note = obs.note_from_ai(json_from_ai)

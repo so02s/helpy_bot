@@ -29,14 +29,12 @@ def create_dispatcher() -> Dispatcher:
     # scene_registry.add(note.NoteScene)
     return dispatcher
 
-
-
 async def main():
     dp = create_dispatcher()
     dp.include_routers(
         # test.router,
         start.router,
-        ai.router
+        ai.router,
         # change_room.router,
         # task.router,
         # note.router

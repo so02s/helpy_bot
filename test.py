@@ -58,31 +58,11 @@ If you're being asked an illegal question or you don't understand what function 
 
 blackbox_url = 'https://www.blackbox.ai/api/chat'
 
-
-# Хз насколько это нужно
-# headers = {
-#     "content-length": "328",
-#     "sec-ch-ua": '"Chromium";v="124", "Microsoft Edge";v="124", "Not-A.Brand";v="99"',
-#     "sec-ch-ua-platform": "Windows",
-#     "dnt": "1",
-#     "sec-ch-ua-mobile": "?0",
-#     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
-#     "content-type": "application/json",
-#     "accept": "*/*",
-#     "origin": "https://www.blackbox.ai",
-#     "sec-fetch-site": "same-origin",
-#     "sec-fetch-mode": "cors",
-#     "sec-fetch-dest": "empty",
-#     "referer": "https://www.blackbox.ai/",
-#     "accept-encoding": "gzip",
-#     "accept-language": "en-US,en;q=0.9",
-#     "cookie": "sessionId=036d1b06-57f1-48f6-94cd-e4dcbe7b16d9; intercom-id-jlmqxicb=521c61bf-622b-414c-b306-91448a958fd3; intercom-session-jlmqxicb=; intercom-device-id-jlmqxicb=41d3bcdb-6984-454d-ac53-0b4ffec17d0d",
-#     "priority": "u=1, i"
-# }
-
 def main():
+    req = "Добавь к проекту Отрицание бытия описание добавить уши"
+    
     data = {
-        "messages": [{"id": "2wlAo5V", "content": f"{instructions}\n\n---\n\nПРИВЕТ", "role": "user"}],
+        "messages": [{"id": "2wlAo5V", "content": f"{instructions}\n\n---\n\n{req}", "role": "user"}],
         "id": "2wlAo5V",
         "previewToken": None,
         "userId": random_id_generator(),
@@ -98,10 +78,17 @@ def main():
     }
 
     response = requests.post(blackbox_url, json=data) #headers=headers, 
-
+    sources = None
+    resp = ""
+    
     for text_stream in response.iter_lines(decode_unicode=True, delimiter="\n"):
         if text_stream:
-            print(text_stream)
+            if sources is None: sources = text_stream
+            else:
+                print(text_stream)
+                resp += text_stream + "\n"
+                
+    return resp
 
 if __name__ == '__main__':
     main()
