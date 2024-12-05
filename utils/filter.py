@@ -1,6 +1,7 @@
 from typing import Any, Awaitable, Callable, Dict
 
-from aiogram.types import TelegramObject
+from aiogram.types import TelegramObject, Message
+from aiogram.filters import Filter
 from aiogram.filters.callback_data import CallbackData
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 
@@ -25,3 +26,8 @@ class IsAdminMiddleware(BaseMiddleware):
             return
         
         return await handler(event, data)
+    
+
+class ForwardFilter(Filter):
+    async def __call__(self, message: Message) -> bool:
+        return message.forward_date is not None

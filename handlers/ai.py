@@ -1,17 +1,49 @@
+import sys
+import json
+import httpx
 from aiogram import Router, F
 from aiogram.types import Message
-import requests # grequests as 
-from utils import promt
-from handlers.note import project
+from utils import promt, func_ai
+from utils.filter import ForwardFilter
 
 router = Router()
 
+# TODO не только сообщения, но и пересланные сообщения -> вообще они могут сохраняться в оперативу, а потом обновляться во время сообщения от пользователя
+@router.message(ForwardFilter())
+async def add_forward_msg(msg: Message):
+    # print(msg.forward_from.username) - показывает пользователя, но если что - может и не показывать
+    
+    pass
+
 @router.message()
 async def gui_ai(msg: Message):
-    text = await ask(msg.text)
-    # TODO проверка на правильность JSON формата. Если нет - попробовать еще два раза
-    await msg.answer(text)
+    result = None
+    
+    for i in range(3):
+        # Вопрос к ИИ
+        text = await ask(msg.text)
+        # Проверка JSON
+        valid_json = validate_json(text)
+        if valid_json:
+            break
+    
+    # Выполнение функций
+    if valid_json:
+        function, args = valid_json
+        if isinstance(args, list):
+            result = await function(args)
+        else:
+            result = await function(**args)
 
+    # оттчет о выполнении через ИИ
+    if result:
+        text = await ask(result, instructions=promt.good_answer())
+        await msg.answer(text)
+
+
+
+
+# =========== ИИ - JSON ===========
 
 def random_id_generator():
     import uuid
@@ -21,111 +53,48 @@ def random_id_generator():
 async def ask(
     req: str,
     instructions: str = promt.func_call(),
-    url: str = 'https://www.blackbox.ai/api/chat'
+    url: str = 'https://api.blackbox.ai/api/chat' # ВАЖНО
 ):
     data = {
-        "messages": [{"id": "2wlAo5V", "content": f"{instructions}\n\n---\n\n{req}", "role": "user"}],
-        "id": "2wlAo5V",
-        "previewToken": None,
-        "userId": random_id_generator(),
+        "messages": [{"role": "user", "content": f"{instructions}\n\n---\n\n{req}"}],
+        "user_id": random_id_generator(),
         "codeModelMode": True,
         "agentMode": {},
         "trendingAgentMode": {},
-        "isMicMode": False,
-        "isChromeExt": False,
-        "githubToken": None,
-        "clickedAnswer2": False,
-        "clickedAnswer3": False,
-        "visitFromURL": None
     }
-    
-    response = requests.post(url, json=data, stream=True)
-    sources = None
-    resp = ""
-
-    for text_stream in response.iter_lines(decode_unicode=True, delimiter="\n"):
-        if sources is None: sources = text_stream
-        else: resp += text_stream + "\n"
+    headers = {"Content-Type": "application/json"}
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, headers=headers, json=data)
+        lines = response.text.splitlines()
+        resp = "\n".join(lines[1:])
+        print(resp)
         
-    return resp
+        return resp
 
+def validate_json(json_string: str):
+    """
+    Проверяет валидность JSON и наличие функции с корректными аргументами, затем возвращает её.
+    """
+    json_string = json_string.replace('```', '')
+    json_string = json_string.replace('json', '')
+    try:
+        data = json.loads(json_string)
+    except json.JSONDecodeError as e:
+        return None
+    
+    available_functions = dir(func_ai)
 
+    if isinstance(data, list):
+        data = data[0]
+    function_name = data.get("function_name")
+    args = data.get("args", {})
 
+    if function_name not in available_functions:
+        return None
 
+    function = getattr(func_ai, function_name)
+    
+    if not isinstance(args, (dict, list)):
+        return None
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# from openai import OpenAI
-
-# from aiogram import Router, F
-# from aiogram.filters import CommandStart
-# from aiogram.types import Message
-# from aiogram.fsm.context import FSMContext
-# from aiogram.types.callback_query import CallbackQuery
-
-# from create_bot import bot
-# from utils.filter import IsAdmin
-# from utils import keyboard as kb
-
-# router = Router()
-
-# dialog_history = []
-
-# client = OpenAI(
-#     base_url='http://localhost:11434/v1',
-#     api_key='ollama',
-# )
-
-# @router.message(IsAdmin())
-# async def start_cmd(msg: Message):
-#     global dialog_history
-#     user_input = msg.text
-
-#     if user_input.lower() == "stop":
-#         await msg.answer("Диалог завершен. Спасибо за общение!")
-#         dialog_history = []
-#         return
-
-#     dialog_history.append({
-#         "role": "user",
-#         "content": user_input,
-#     })
-
-#     response = client.chat.completions.create(
-#         model="llama2",
-#         messages=dialog_history,
-#     )
-
-#     response_content = response.choices[0].message.content
-#     await msg.answer(response_content)
-
-#     dialog_history.append({
-#         "role": "assistant",
-#         "content": response_content,
-#     })
+    return function, args

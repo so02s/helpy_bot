@@ -1,10 +1,132 @@
 import os
 import json
-from datetime import datetime as dt
+from datetime import datetime as dt, timedelta
 from pytz import timezone
 from aiogram.types import Message, MessageEntity
 
 import aiofiles
+
+# ============ Save info ================
+async def add_task(start_time: str, name: str, time: str = None) -> bool:
+    '''
+    Добавляет задачу в файловую систему на указанный день.
+
+    Параметры:
+    - start_time (str): Время начала задачи в формате "YYYY-MM-DD HH:MM".
+    - name (str, optional): Название задачи. Если не указано, задача не будет добавлена.
+    - time (str, optional): Продолжительность задачи в формате "HH:MM". 
+                             Если не указано, по умолчанию продолжительность составляет 1 час.
+                             
+    Возвращает: True, если задача была успешно добавлена, иначе False.
+    '''
+    if not name or not start_time:
+        return False
+    
+    # Папка для заданий
+    directory = './Time/'
+    os.makedirs(directory, exist_ok=True)
+    
+    try:
+        start = dt.strptime(start_time, "%Y-%m-%d %H:%M")
+    except:
+        start = dt.strptime(start_time, "%Y-%m-%d")
+    
+    # Название файла
+    file_name = start.strftime("%Y-%m-%d")
+    file_path = os.path.join(directory, file_name)
+    
+    # Форматирование времени
+    hours, minutes = 1, 0
+    if time:
+        hours, minutes = map(int, time.split(':'))
+    duration = timedelta(hours=hours, minutes=minutes)
+    end = start + duration
+    
+    # Добаление шаблонного файла, если такого не существует
+    if not os.path.exists(file_path):
+        async with aiofiles.open(file_path, 'w', encoding='utf-8') as f:
+            await f.write("# Day planner\n")
+    
+    # Дописать задачу в файл
+    async with aiofiles.open(file_path, 'a', encoding='utf-8') as f:
+        if start:
+            bytes_written = await f.write(f"- [ ] {start.strftime('%H:%M')}-{end.strftime('%H:%M')} {name}\n")
+        else:
+            bytes_written = await f.write(f"- [ ] {name}\n")
+    
+    return bytes_written > 0
+
+
+async def add_unclear_task(name: str) -> bool:
+    '''
+    Добавляет задачу без даты в специальный файл для задач.
+
+    Параметры:
+    - name (str): Название задачи.
+
+    Возвращает: True, если задача была успешно добавлена, иначе False.
+    '''
+    if not name:
+        return False
+    
+    directory = './Time/'
+    os.makedirs(directory, exist_ok=True)
+    file_name = 'Unclear Task'
+    file_path = os.path.join(directory, file_name)
+    
+    # Добаление шаблонного файла, если такого не существует
+    if not os.path.exists(file_path):
+        async with aiofiles.open(file_path, 'w', encoding='utf-8') as f:
+            await f.write("# Day planner\n")
+    
+    async with aiofiles.open(file_path, 'a', encoding='utf-8') as f:
+        bytes_written = await f.write(f"- [ ] {name}\n")
+
+    return bytes_written > 0
+    
+
+# =================== Return info =================
+async def timetable(date: str) -> None:
+    # Открыть файл на необходимый день
+    # Распарсить его по задачам
+    # Вернуть инфу в сообщении
+    # (Либо в GUI, но это только когда буду вывод в телегу делать) 
+    pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # мне не нравится, что сохраняется по времени 
 # TODO переделать под заголовки

@@ -11,11 +11,12 @@ from handlers import (
     ai
 )
 from utils.filter import IsAdminMiddleware
+from utils.scheduler import start_scheduler
 
 
 
 async def start_bot():
-    pass
+    start_scheduler()
 
 async def stop_bot():
     pass
