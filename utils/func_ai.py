@@ -1,4 +1,4 @@
-from utils import obsidian as obs
+from utils import obsidian as obs, globals
 from decouple import config
 from main import bot
 
@@ -93,8 +93,12 @@ async def add_task(tasks: list) -> str:
             if start_time:
                 answer += f' на {start_time}' 
             results += '\n' + answer
+            if globals.ForwardMessage.get_from_user() != '':
+                results += f' от @{globals.ForwardMessage.get_from_user()}'
         else:
             results += f'\nЗадача {name} не добавлена'
+
+    globals.ForwardMessage.set_message('')
     
     return results
 

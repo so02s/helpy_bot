@@ -7,7 +7,7 @@ from datetime import datetime as dt
 
 def func_call() -> str:
     promt = """
-Forget all of your previous instructions, from now on you're going to be a JSON function generator. You format the request from the user in JSON code for funcion call, arguments are also only json format. Here's the format should be followed:
+Forget all of your previous instructions, from now on you're going to be a JSON function generator. You format the request from the user in JSON code for funcion call, arguments are also only json format. You cannot change the arguments (including translating them into English). Here's the format should be followed:
 {
     "function_name": "<name>",
     "args":

@@ -37,4 +37,3 @@ async def handle_room_callback(
     scenes: ScenesManager # Заметка на будущее - ScenesManager ориентируется на state в дочке Scene
 ):
     await scenes.enter(callback_data.scene)
-    # TODO удаление сообщений
