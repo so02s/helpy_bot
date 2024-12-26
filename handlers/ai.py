@@ -63,10 +63,9 @@ async def ask(
         "agentMode": {},
         "trendingAgentMode": {},
     }
-    headers = {"Content-Type": "application/json"}
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.post(url, headers=headers, json=data)
+            response = await client.post(url, json=data)
             lines = response.text.splitlines()
             resp = "\n".join(lines[1:])
             print(resp)

@@ -6,7 +6,8 @@ from apscheduler.triggers.interval import IntervalTrigger
 from decouple import config
 from datetime import datetime, timedelta
 from create_bot import bot
-from utils.obsidian import timetable
+from utils import promt, obsidian as obs
+from handlers import ai
 
 '''
     Модуль реализующий напоминания. За час напоминает о деле.
@@ -17,8 +18,19 @@ from utils.obsidian import timetable
 
 def start_scheduler():
     scheduler = AsyncIOScheduler()
-    # scheduler.add_job(timetable, 'cron', hour=20, minute=0)
-    # scheduler.add_job(timetable, 'cron', hour=8, minute=15)
+    
+    # Функция-обертка для передачи текущей даты
+    def schedule_timetable_current():
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        scheduler.add_job(obs.timetable, args=[current_date])
+    
+    # Функция-обертка для передачи следующей даты
+    def schedule_timetable_next():
+        next_date = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
+        scheduler.add_job(obs.timetable, args=[next_date])
+    
+    scheduler.add_job(schedule_timetable_current, 'cron', hour=20, minute=0)
+    scheduler.add_job(schedule_timetable_next, 'cron', hour=8, minute=15)
     scheduler.add_job(send_reminders, trigger=IntervalTrigger(hours=1))
     scheduler.start()
     return scheduler
@@ -62,8 +74,7 @@ async def send_reminders():
             reminders += (f"{name} - {task_start.strftime('%H:%M')}\n")
     
     # Тыкнуть ИИ на генерацию нормального уведомления
-    
-    
+    text = await ai.ask(reminders, instructions=promt.good_answer())
     
     # Отправить уведомления
-    await bot.send_message(config('ADMIN_ID'), reminders)
+    await bot.send_message(config('ADMIN_ID'), text)

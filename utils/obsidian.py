@@ -42,8 +42,22 @@ async def add_task(start_time: str, name: str, time: str = None) -> bool:
     duration = timedelta(hours=hours, minutes=minutes)
     end = start + duration
     
+    # Проверка на пересечение с существующими задачами
+    if os.path.exists(file_path):
+        async with aiofiles.open(file_path, 'r', encoding='utf-8') as f:
+            async for line in f:
+                if line.startswith("- [ ]"):
+                    # Извлечение времени из строки
+                    time_range = line.split()[2:4]  # Получаем время начала и конца
+                    existing_start = dt.strptime(time_range[0], "%H:%M")
+                    existing_end = dt.strptime(time_range[1], "%H:%M")
+                    
+                    # Проверка на пересечение
+                    if (start < existing_end and end > existing_start):
+                        raise ValueError(f"Время {time_range[0]}-{time_range[1]} уже занято другой задачей.")
+    
     # Добаление шаблонного файла, если такого не существует
-    if not os.path.exists(file_path):
+    else:
         async with aiofiles.open(file_path, 'w', encoding='utf-8') as f:
             await f.write("# Day planner\n")
     

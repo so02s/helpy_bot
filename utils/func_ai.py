@@ -86,7 +86,10 @@ async def add_task(tasks: list) -> str:
         elif start_time is None:
             result = await obs.add_unclear_task(name)
         else:
-            result = await obs.add_task(start_time, name, time)
+            try:
+                result = await obs.add_task(start_time, name, time)
+            except ValueError as v:
+                print(v)
     
         if result:
             answer = f'Задача {name} добавлена'
