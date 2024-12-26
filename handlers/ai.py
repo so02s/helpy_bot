@@ -1,6 +1,7 @@
 import sys
 import json
 import httpx
+import requests
 from aiogram import Router, fsm
 from aiogram.types import Message
 from utils import promt, func_ai, globals
@@ -18,6 +19,7 @@ async def add_forward_msg(msg: Message):
 @router.message()
 async def gui_ai(msg: Message):
     result = None
+    print(msg.text)
     for i in range(3):
         # Вопрос к ИИ
         text = await ask(
@@ -54,18 +56,23 @@ async def ask(
     req: str,
     forward_msg: str = '',
     instructions: str = promt.func_call(),
-    url: str = 'https://api.blackbox.ai/api/chat' # ВАЖНО
+    url: str = 'https://www.blackbox.ai/api/chat' # "https://www.blackbox.ai" # ВАЖНО
 ):
     data = {
         "messages": [{"role": "user", "content": f"{instructions}\n\n---\n\n{req}\n{forward_msg}"}],
-        "user_id": random_id_generator(),
-        "codeModelMode": True,
         "agentMode": {},
         "trendingAgentMode": {},
     }
+    
+    print("Request URL:", url)
+    print("Request Data:", json.dumps(data, indent=2))
+
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.post(url, json=data)
+        with requests.Session() as session:
+            response = session.post(url, json=data, stream=True)
+            if response.status_code != 200:
+                print(f"Error: Received status code {response.status_code}")
+                return "No answer from AI"
             lines = response.text.splitlines()
             resp = "\n".join(lines[1:])
             print(resp)

@@ -37,7 +37,7 @@ def start_scheduler():
 
 async def send_reminders():
     # Проверить файловую систему (ФС) на разные таски
-    tasks_folder = './Time'
+    tasks_folder = config('BASE_PATH') + '/Time'
     
     today = datetime.now().strftime('%Y-%m-%d')
     today_path = os.path.join(tasks_folder, today)

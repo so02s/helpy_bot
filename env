@@ -1,0 +1,6 @@
+# main configuration
+TOKEN_BOT=""
+ADMIN_ID=""
+
+# file system configuration
+BASE_PATH=""
