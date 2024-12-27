@@ -3,7 +3,7 @@ aiogram
 python-decouple
 sqlalchemy
 asyncpg
-openai
+ollama
 pytz
 Requests==2.31.0
 grequests

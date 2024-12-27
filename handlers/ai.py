@@ -47,10 +47,6 @@ async def gui_ai(msg: Message):
 
 # =========== ИИ - JSON ===========
 
-def random_id_generator():
-    import uuid
-    return str(uuid.uuid4())
-
 # Запрос к ИИ
 async def ask(
     req: str,
@@ -64,9 +60,6 @@ async def ask(
         "trendingAgentMode": {},
     }
     
-    print("Request URL:", url)
-    print("Request Data:", json.dumps(data, indent=2))
-
     try:
         with requests.Session() as session:
             response = session.post(url, json=data, stream=True)
