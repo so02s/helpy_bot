@@ -1,46 +1,28 @@
 import asyncio
 
 from aiogram import Dispatcher
-from aiogram.fsm.scene import SceneRegistry
 from aiogram.fsm.storage.memory import SimpleEventIsolation
 
-from create_bot import bot
+from setup import bot
 from handlers import (
     start,
-    test,
     ai
 )
 from utils.filter import IsAdminMiddleware
 
 
-
-async def start_bot():
-    pass
-
-async def stop_bot():
-    pass
-
 def create_dispatcher() -> Dispatcher:
     dispatcher = Dispatcher(
         events_isolation=SimpleEventIsolation(),
     )
-    # scene_registry = SceneRegistry(dispatcher)
-    # scene_registry.add(task.TaskScene)
-    # scene_registry.add(note.NoteScene)
     return dispatcher
 
 async def main():
     dp = create_dispatcher()
     dp.include_routers(
-        # test.router,
         start.router,
         ai.router,
-        # change_room.router,
-        # task.router,
-        # note.router
     )
-    dp.startup.register(start_bot)
-    dp.shutdown.register(stop_bot)
     dp.message.outer_middleware(IsAdminMiddleware())
 
     try:
@@ -50,6 +32,7 @@ async def main():
         await bot.session.close()
 
 
+# TODO в 23 запуск "сна" - и в 7:00 выключение сна
 
 if __name__ == "__main__":
     asyncio.run(main())

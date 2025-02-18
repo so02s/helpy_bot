@@ -266,3 +266,6 @@ def get_project_text(note: Note) -> str:
 """
 
     return project_text
+
+
+

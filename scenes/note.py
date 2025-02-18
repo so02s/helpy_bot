@@ -3,7 +3,7 @@ from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram.fsm.scene import on
 
-from handlers.change_room import CustomScene
+from scenes.change_room import CustomScene
 from utils import obsidian as obs
 
 

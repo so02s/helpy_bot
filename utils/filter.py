@@ -1,15 +1,12 @@
 from typing import Any, Awaitable, Callable, Dict
 
 from aiogram.types import TelegramObject
-from aiogram.filters.callback_data import CallbackData
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 
-class RoomCallbackFactory(CallbackData, prefix="fabroom"):
-    scene: str
-    
-# TODO admin в настройках
+from decouple import config
+
 class IsAdminMiddleware(BaseMiddleware):  
-    def __init__(self, admin: str = 'SpicySad'):
+    def __init__(self, admin: str = config("ADMIN_NAME")):
         super().__init__()
         self.admin = admin
     
