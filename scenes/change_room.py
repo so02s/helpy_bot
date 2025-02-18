@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.scene import Scene, on, ScenesManager
 
-from setup import bot
+from ai_sleep.setup import bot
 from utils import keyboard as kb
 from utils.filter import RoomCallbackFactory
 

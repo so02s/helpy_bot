@@ -3,7 +3,7 @@ import asyncio
 from aiogram import Dispatcher
 from aiogram.fsm.storage.memory import SimpleEventIsolation
 
-from setup import bot
+from ai_sleep.setup import bot
 from handlers import (
     start,
     ai

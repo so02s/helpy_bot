@@ -3,7 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
-from setup import bot
+from ai_sleep.setup import bot
 from utils import keyboard as kb
 
 '''
